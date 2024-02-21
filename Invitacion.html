@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Graduación</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.0.1"></script>
+    <style>
+        body {
+            font-family: American Typewriter, serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden; /* Ocultar el desbordamiento de la imagen */
+            position: center;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; /* Cambiar a color negro */
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px; } /* Posición inicial de la animación */
+            100% { background-position: 1000px; } /* Posición final de la animación */
+        }
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .envelope {
+            background-color: #212aa5;
+            border: 2px solid black; /* Aumentamos el grosor del borde */
+            width: 450px; /* Ajustamos el ancho del sobre */
+            height: 350px; /* Ajustamos la altura del sobre */
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.5s; /* Agregamos transición para animar la apertura del sobre */
+            border-radius: 20px; /* Añadimos bordes redondeados */
+            overflow: hidden; /* Ocultar el triángulo que sobresale */
+        }
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0px; /* Ajustamos la posición superior para centrar el triángulo */
+            left: calc(5% - 100px); /* Ajustamos la posición horizontal para centrar el sello */
+            width: 20px;
+            height: 20px;
+            border-left: 300px solid transparent; /* Triángulo izquierdo */
+            border-right: 300px solid transparent; /* Triángulo derecho */
+            border-top: 50px solid #000; /* Triángulo superior invertido */
+        }
+        .envelope.opened {
+            transform: translateY(-120px); /* Cambiamos la dirección de la transformación para que suba */
+        }
+        .invitation {
+            padding: 30px;
+            background-color: #000; /* Cambiamos el color de fondo a negro */
+            border: 1px solid #ccc;
+            display: none; /* Ocultar la invitación inicialmente */
+            position: absolute;
+            top: 0; /* Ajustamos la posición superior */
+            left: 0; /* Ajustamos la posición izquierda */
+            width: 100%; /* Ocupar todo el ancho */
+            height: 100%; /* Ocupar todo el alto */
+            z-index: 1; /* Aseguramos que esté sobre el sobre */
+            overflow-y: auto; /* Agregamos scroll si el contenido es largo */
+            color: gold; /* Cambiamos el color del texto a dorado */
+            border-radius: 20px; /* Añadimos bordes redondeados */
+        }
+        .invitation-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 65%;
+            padding: 0 5px;
+        }
+        h1, p {
+            margin: 0;
+            text-align: center;
+        }
+        .graduation {
+            font-style: italic; /* Establecemos el estilo de cursiva para la palabra "graduación" */
+        }
+        a {
+            display: block; /* Convertimos el enlace en un bloque para centrarlo */
+            color: gold;
+            text-decoration: none;
+            text-align: center; /* Centramos el texto horizontalmente */
+            margin-top: 10px; /* Agregamos margen superior */
+        }
+        .invitation img {
+            border-radius: 20px; /* Agregamos bordes redondeados a la imagen */
+            max-width: 80%; /* Ajustamos el tamaño máximo de la imagen */
+            max-height: 80%; /* Ajustamos la altura máxima de la imagen */
+        }
+        .invitation-outer-text {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-40%);
+            color: white;
+            font-style: italic;
+            font-size: 26px;
+        }
+        .graduation-cap {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px; /* Ajusta el ancho según sea necesario */
+            height: auto; /* Ajusta la altura automáticamente */
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="content">
+        <div class="envelope" onclick="openEnvelope(this)">
+            <img src="birrete2.png" alt="Graduation Cap" class="graduation-cap">
+            <div class="invitation" id="invitation">
+                <div class="invitation-content">
+                    <h1><span class="graduation">Mi Graduación</span></h1>
+                    <p>Andrew Villa Pizarro</p>
+                    <p>Fecha: 16 de marzo</p>
+                    <p>Lugar: Babahoyo 3616 y Francisco Segura</p>
+                    <a href="https://www.google.com/maps/place/Babahoyo+3616,+Guayaquil+090301/@-2.2160431,-79.9066583,21z/data=!4m6!3m5!1s0x902d6e3ae0667fa5:0x409498c5a1eac095!8m2!3d-2.2160555!4d-79.9066102!16s%2Fg%2F11hchy90_l?entry=ttu" target="_blank">Ver en Google Maps</a>
+                </div>
+                <img src="daniel.jpg" alt="daniel"> <!-- Agrega la ruta de tu imagen -->
+            </div>
+            <div class="invitation-outer-text">Te invito a celebrar un logro más en mi vida</div>
+        </div>
+    </div>
+    <!-- Añade un canvas para lanzar el confeti -->
+    <canvas id="confetti-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+
+    <script>
+        function openEnvelope(envelope) {
+            envelope.classList.add('opened'); // Agregar la clase "opened" al sobre
+            setTimeout(() => {
+                document.getElementById('invitation').style.display = 'flex'; // Mostrar la invitación después de la animación
+            }, 500); // Ajustar el tiempo para que coincida con la duración de la animación
+            
+            // Lanzar confeti
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+
+            function frame() {
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42'],
+                    shapes: ['circle'],
+                    startVelocity: 40,
+                    ticks: 60,
+                    zIndex: 0,
+                    decay: 0.9,
+                    gravity: 800
+                });
+            }
+            frame();
+        }
+    </script>
+</body>
+</html>
